@@ -1,0 +1,115 @@
+blocks:
+- all_upstream_blocks_executed: true
+  color: null
+  configuration: {}
+  downstream_blocks:
+  - data_filtering
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: restless field
+  retry_config: null
+  status: executed
+  timeout: null
+  type: data_loader
+  upstream_blocks: []
+  uuid: restless_field
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: transformers/data_filtering.py
+  downstream_blocks:
+  - data_preprocessing
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: data_filtering
+  retry_config: null
+  status: executed
+  timeout: null
+  type: transformer
+  upstream_blocks:
+  - restless_field
+  uuid: data_filtering
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: transformers/data_preprocessing.py
+  downstream_blocks:
+  - data_storage
+  - opaque_scholar
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: data_preprocessing
+  retry_config: null
+  status: executed
+  timeout: null
+  type: transformer
+  upstream_blocks:
+  - data_filtering
+  uuid: data_preprocessing
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: data_exporters/data_storage.py
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: data_storage
+  retry_config: null
+  status: executed
+  timeout: null
+  type: data_exporter
+  upstream_blocks:
+  - data_preprocessing
+  uuid: data_storage
+- all_upstream_blocks_executed: true
+  color: null
+  configuration: {}
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: opaque scholar
+  retry_config: null
+  status: executed
+  timeout: null
+  type: data_exporter
+  upstream_blocks:
+  - data_preprocessing
+  uuid: opaque_scholar
+cache_block_output_in_memory: false
+callbacks: []
+concurrency_config: {}
+conditionals: []
+created_at: '2024-01-23 01:46:33.511224+00:00'
+data_integration: null
+description: null
+executor_config: {}
+executor_count: 1
+executor_type: null
+extensions: {}
+name: thoughtful runesmith
+notification_config: {}
+remote_variables_dir: null
+retry_config: {}
+run_pipeline_in_one_process: false
+settings:
+  triggers: null
+spark_config: {}
+tags: []
+type: python
+updated_at: '2024-01-25 01:51:53'
+uuid: thoughtful_runesmith
+variables_dir: /Users/dylanyap/.mage_data/datapipeline
+widgets: []
