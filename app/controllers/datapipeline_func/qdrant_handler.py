@@ -5,16 +5,17 @@ from llama_index import (
 )
 from llama_index.node_parser import SentenceWindowNodeParser
 from llama_index.embeddings import HuggingFaceEmbedding
-import configparser
 import openai
 from pandas import DataFrame
 from app.controllers.qdrant.init_func import init_qdrant
+from app.helpers import config_reader
 
-config = configparser.ConfigParser()
-config.read('config.ini')
-
+# Define config parameters
+config = config_reader()
 openai_api_key = config.get('openai', 'api_key')
+
 openai.api_key = openai_api_key
+embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
 
 def load_qdrant(df: DataFrame, collection_name:str) -> None:
     '''
@@ -26,7 +27,6 @@ def load_qdrant(df: DataFrame, collection_name:str) -> None:
         None.
     '''
     docs = []
-    embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
     storage_context = init_qdrant(collection_name) # Connect to Qdrant vector database.
     # Perform data preprocessing for uploading to Qdrant vector database.
     for i, row in df.iterrows():
@@ -46,7 +46,8 @@ def load_qdrant(df: DataFrame, collection_name:str) -> None:
     )
     service_context = ServiceContext.from_defaults(
         embed_model = embed_model,
-        node_parser = node_parser)
+        node_parser = node_parser
+        )
     index = VectorStoreIndex.from_documents(
         docs, 
         storage_context = storage_context,

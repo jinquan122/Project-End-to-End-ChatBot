@@ -19,6 +19,7 @@ config.ini
 io_config.yaml
 .vscode
 .mage_data
+.deepeval
 
 # csv
 price.csv

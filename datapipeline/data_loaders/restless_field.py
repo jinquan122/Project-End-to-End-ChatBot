@@ -1,11 +1,12 @@
 import pandas as pd
 from newsdataapi import NewsDataApiClient
-import configparser
+from app.helpers import config_reader
 
-config = configparser.ConfigParser()
-config.read('config.ini')
+# Define config parameters
+config = config_reader()
+api_key = config.get('newsdataapi', 'api_key')
 
-api = NewsDataApiClient(apikey=config.get('newsdataapi','api_key'))
+api = NewsDataApiClient(apikey=api_key)
 
 if 'data_loader' not in globals():
     from mage_ai.data_preparation.decorators import data_loader

@@ -1,9 +1,10 @@
 import pandas as pd
 import requests
-import configparser
+from app.helpers import config_reader
 
-config = configparser.ConfigParser()
-config.read('config.ini')
+# Define config parameters
+config = config_reader()
+url = config.get('financialmodelingprep', 'url')
 
 
 if 'data_loader' not in globals():
@@ -17,7 +18,6 @@ def load_data_from_api(*args, **kwargs) -> pd.DataFrame:
     """
     Template for loading data from API
     """
-    url = config.get('financialmodelingprep', 'url')
     response = requests.get(url)
     price = [item['close'] for item in response.json()['historical']]
     date = [item['date'] for item in response.json()['historical']]

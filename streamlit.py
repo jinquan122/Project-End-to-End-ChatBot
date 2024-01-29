@@ -33,7 +33,10 @@ if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             # create streaming response from a response where response is a text
-            response = st.session_state.chat_engine.chat(prompt)
+            response = st.session_state.chat_engine.chat(prompt, evaluate=True)
+            if "graph" in response.lower() and "plotted" in response.lower():
+                # if graph is plotted, then return the graph
+                st.image("plot.png")
             st.write(response)
             message = {"role": "assistant", "content": response}
             st.session_state.messages.append(message) # Add response to message history

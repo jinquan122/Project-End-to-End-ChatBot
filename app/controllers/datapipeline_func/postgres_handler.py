@@ -1,19 +1,24 @@
-import configparser
 import psycopg2
 import pandas as pd
+from app.helpers import config_reader
 
-config = configparser.ConfigParser()
-config.read('config.ini')
+# Define config parameters
+config = config_reader()
+host = config.get('database', 'host')
+port = config.get('database', 'port')
+database = config.get('database', 'database')
+user = config.get('database', 'user')
+password = config.get('database', 'password')
 
 def get_latest_article_id():
     # Establish a connection to the PostgreSQL database
     try:
         connection = psycopg2.connect(
-            host=config.get('database', 'host'),
-            port=config.get('database', 'port'),
-            database=config.get('database', 'database'),
-            user=config.get('database', 'user'),
-            password=config.get('database', 'password')
+            host=host,
+            port=port,
+            database=database,
+            user=user,
+            password=password
         )
         # Example: Execute another query
         query = "SELECT * FROM news ORDER BY pubdate DESC LIMIT 1;"
