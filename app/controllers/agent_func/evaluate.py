@@ -58,6 +58,21 @@ class Evaluator():
             eval_results.append({'guideline':guideline, 'eval_result':eval_result})
         return eval_results
     
+    def _wrapper(self, test_name, eval_result):
+        print("Test name: ", test_name)
+        print("Passing: ", eval_result.passing)
+        print("Score: ", eval_result.score)
+        print("Feedback: ", eval_result.feedback)
+    
+    def print_results(self):
+        faith_result = self.faithfulness_evaluator()
+        context_result = self.context_evaluator()
+        relevancy_result = self.relevancy_evaluator()
+        self._wrapper("Faithfulness", faith_result)
+        self._wrapper("Context Relevancy", context_result)
+        self._wrapper("Relevancy", relevancy_result)
+        
+    
 class Cost():
     def __init__(self):
         self.llm = MockLLM()  

@@ -16,6 +16,11 @@ class GoogleSearch:
         self.num = 5
 
     def stack(self) -> (List[FunctionTool], List[FunctionTool]):
+        '''
+        Stack the GoogleSearch tool and LoadAndSearch tool.
+        Returns:
+            (List[FunctionTool], List[FunctionTool]): GoogleSearch and LoadAndSearch tools.
+        '''
         gsearch_tools = GoogleSearchToolSpec(key=self.api_key, engine=self.engine, num=self.num).to_tool_list()
         gsearch_load_and_search_tools = LoadAndSearchToolSpec.from_defaults(gsearch_tools[0]).to_tool_list()
         return gsearch_tools, gsearch_load_and_search_tools

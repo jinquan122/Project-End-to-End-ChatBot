@@ -3,6 +3,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def plot() -> None:
+    '''
+    Read apple csv data from local price.csv and plot the price using matplotlib.
+    Returns:
+        Message - Graph plotted.
+    '''
     df = pd.read_csv("price.csv")
     df['date'] = pd.to_datetime(df['date'])
     # Plotting

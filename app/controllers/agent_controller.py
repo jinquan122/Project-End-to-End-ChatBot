@@ -12,25 +12,22 @@ config = config_reader()
 class AgentController:
   def __init__(self):
     self.agent = initAgent()
+    # Initiate Traceloop (LLM observarbility tool) for monitoring LLM performance
     Traceloop.init(disable_batch=True, api_key=config.get('traceloop','api_key'))
     
   def chat(self, msg:str, evaluate:bool = False) -> str:
-      # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-      # logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+      '''
+      Chat with the agent.
+      Args:
+          msg (str): Message to be sent to the agent.
+          evaluate (bool): True to activate LLM/RAG response evaluate mode.
+      Returns:
+          str: Response from the agent.
+      '''
       if evaluate == True:
         response = self.agent.query(msg)
-        self.evaluator = Evaluator(msg, response)
-        faith_passing, faith_score, faith_feedback = self.evaluator.faithfulness_evaluator()
-        context_passing, context_score, context_feedback = self.evaluator.context_evaluator()
-        relevancy_passing, relevancy_score, relevancy_feedback = self.evaluator.relevancy_evaluator()
-        # guideline_results = self.evaluator.guideline_evaluator()
-        print("Faithfulness: ", faith_passing,faith_score,faith_feedback)
-        print("Context: ", context_passing,context_score,context_feedback)
-        print("Relevancy: ", relevancy_passing,relevancy_score,relevancy_feedback)
-        # for guideline_result in guideline_results:
-        #   guideline = guideline_result['guideline']
-        #   result = guideline_result['eval_result']
-        #   print("Guideline: ",guideline,result.passing,result.score,result.feedback)
+        evaluator = Evaluator(query=msg, response=response)
+        evaluator.print_results()
 
       if evaluate == False:
         response = self.agent.query(msg)

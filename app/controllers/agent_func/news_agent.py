@@ -28,13 +28,24 @@ def initAgent(
     seed: int = 1234,
     similarity_cutoff: int = 0.5,
     retrieve_top_k: int = 10
-):
+) -> OpenAIAgent:
   '''
-  Initialize the agent with the vector database.
+  Initialize the agent with three tools.
+  1. Vector db retriever tool
+  2. Google Search tool
+  3. Plotting tool
+
+  Args:
+    model (str): The model to use for the agent.
+    temperature (int): The temperature to use for the agent.
+    seed (int): The seed to use for the agent.
+    similarity_cutoff (int): The similarity cutoff to use for the agent.
+    retrieve_top_k (int): The retrieve top k to use for the agent.
+
   Returns:
-    OpenAIAgent: The agent with the vector database.
+    OpenAIAgent: The agent with three tools.
   '''
-  # Connect to Qdrant vector database.
+  # Define vector db retriever tools
   storage_context = init_qdrant('article-news') 
   service_context = ServiceContext.from_defaults(embed_model = embed_model)
   index = VectorStoreIndex.from_vector_store(
@@ -71,7 +82,7 @@ def initAgent(
   gsearch = GoogleSearch()
   gsearch_tools, gsearch_load_and_search_tools = gsearch.stack()
 
-  # Define plotting function
+  # Define plotting tool
   plotting_tool
 
   return OpenAIAgent.from_tools(
