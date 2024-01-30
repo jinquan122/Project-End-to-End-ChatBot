@@ -3,7 +3,7 @@ from llama_index.tools import QueryEngineTool, FunctionTool, ToolMetadata
 from llama_index.llms import OpenAI
 from llama_index.retrievers import VectorIndexRetriever
 from llama_index.query_engine import RetrieverQueryEngine
-from llama_index.postprocessor import SimilarityPostprocessor, MetadataReplacementPostProcessor
+from llama_index.postprocessor import SimilarityPostprocessor, MetadataReplacementPostProcessor, TimeWeightedPostprocessor
 from llama_index.embeddings import HuggingFaceEmbedding
 from llama_index import ServiceContext, VectorStoreIndex
 from app.controllers.agent_func.prompts import text_qa_template, refine_template, system_prompt
@@ -14,6 +14,7 @@ import openai
 from app.helpers import config_reader
 from app.controllers.agent_func.agent_tool.google_search import GoogleSearch
 from app.controllers.agent_func.agent_tool.graph_plotting import plotting_tool
+from app.controllers.agent_func.agent_tool.recent_news import latest_news_tool
 
 # Define config parameters
 config = config_reader()
@@ -58,7 +59,8 @@ def initAgent(
   )
   node_postprocessors = [
         SimilarityPostprocessor(similarity_cutoff=similarity_cutoff),
-        MetadataReplacementPostProcessor(target_metadata_key="window")
+        MetadataReplacementPostProcessor(target_metadata_key="window"),
+        TimeWeightedPostprocessor(time_decay=0.5, time_access_refresh=False, top_k=10)
     ]
   response_synthesizer = get_response_synthesizer(
     response_mode="compact",
@@ -85,8 +87,11 @@ def initAgent(
   # Define plotting tool
   plotting_tool
 
+  # Define latest news tool
+  latest_news_tool
+
   return OpenAIAgent.from_tools(
-    [vector_query_engine_tool, *gsearch_tools[1::], *gsearch_load_and_search_tools, plotting_tool],
+    [vector_query_engine_tool, *gsearch_tools[1::], *gsearch_load_and_search_tools, plotting_tool, latest_news_tool],
     llm=OpenAI(model=model),
     verbose=True,
     system_prompt=system_prompt,
