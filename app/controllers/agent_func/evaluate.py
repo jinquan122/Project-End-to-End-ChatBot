@@ -21,42 +21,33 @@ class Evaluator():
         self.query = query
 
     def faithfulness_evaluator(self):
+        '''
+        Metrics: To measure if the response from a query engine matches any source nodes.
+        This is useful for measuring if the response was hallucinated.
+        '''
         evaluator_gpt4 = FaithfulnessEvaluator(service_context=self.service_context)
         eval_result = evaluator_gpt4.evaluate_response(query=self.query, response=self.response)
         return eval_result.passing, eval_result.score, eval_result.feedback
     
     def relevancy_evaluator(self):
+        '''
+        Metrics: To measure if the response + source nodes match the query.
+        This is useful for measuring if the query was actually answered by the response.
+        '''
         evaluator_gpt4 = RelevancyEvaluator(service_context=self.service_context)
         eval_result = evaluator_gpt4.evaluate_response(query=self.query, response=self.response)
         return eval_result.passing, eval_result.score, eval_result.feedback
     
     def context_evaluator(self):
+        '''
+        Metrics: To measure on the relevancy of a generated answer and retrieved contexts, respectively, to a given user query.
+        Prompt the judge LLM to take a step-by-step approach:
+        1. Does the provided response match the subject matter of the user’s query?
+        2. Does the provided response attempt to address the focus or perspective on the subject matter taken on by the user’s query?
+        '''
         evaluator_gpt4 = ContextRelevancyEvaluator(service_context=self.service_context)
         eval_result = evaluator_gpt4.evaluate_response(query=self.query, response=self.response)
         return eval_result.passing, eval_result.score, eval_result.feedback
-    
-    def guideline_evaluator(self):
-        eval_results = []
-        GUIDELINES = [
-            "The response should fully answer the query.",
-            "The response should avoid being vague or ambiguous.",
-            (
-                "The response should be specific and use statistics or numbers when"
-                " possible."
-            ),
-        ]
-        evaluators = [
-            GuidelineEvaluator(service_context=self.service_context, guidelines=guideline)
-            for guideline in GUIDELINES
-        ]
-        for guideline, evaluator in zip(GUIDELINES, evaluators):
-            eval_result = evaluator.evaluate(
-                query=self.query,
-                contexts=self.response,
-                response=self.response,
-            )
-            eval_results.append({'guideline':guideline, 'eval_result':eval_result})
-        return eval_results
     
     def _wrapper(self, test_name, eval_result):
         print("Test name: ", test_name)
@@ -65,6 +56,9 @@ class Evaluator():
         print("Feedback: ", eval_result.feedback)
     
     def print_results(self):
+        '''
+        Print evaluation results.
+        '''
         faith_result = self.faithfulness_evaluator()
         context_result = self.context_evaluator()
         relevancy_result = self.relevancy_evaluator()

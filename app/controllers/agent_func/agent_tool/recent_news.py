@@ -21,4 +21,4 @@ def get_latest_news():
 latest_news_tool = FunctionTool.from_defaults(
     fn=get_latest_news, 
     name='latest_news', 
-    description='Get latest news.')
+    description='Get recent and latest news article only. Use this function when user ask for recent or latest news only!')

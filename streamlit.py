@@ -13,7 +13,7 @@ if "messages" not in st.session_state.keys(): # Initialize the chat messages his
 @st.cache_resource(show_spinner=False)
 def load_data():
     with st.spinner(text="Loading and indexing the Streamlit docs – hang tight! This should take 1-2 minutes."):
-        agent = AgentController()
+        agent = AgentController(st.session_state.messages)
         return agent
 
 agent = load_data()

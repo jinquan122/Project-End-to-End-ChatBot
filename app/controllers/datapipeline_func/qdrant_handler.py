@@ -3,7 +3,7 @@ from llama_index import (
     ServiceContext,
     Document,
 )
-from llama_index.node_parser import SentenceWindowNodeParser
+from llama_index.node_parser import SentenceSplitter
 from llama_index.embeddings import HuggingFaceEmbedding
 import openai
 from pandas import DataFrame
@@ -39,10 +39,9 @@ def load_qdrant(df: DataFrame, collection_name:str) -> None:
                         'date': row['pubDate'],
                         'category': row['category']}
                         ))
-    node_parser = SentenceWindowNodeParser.from_defaults(
-        window_size=2,  # control how many sentences on either side to capture
-        window_metadata_key="window",
-        original_text_metadata_key="original_sentence"
+    node_parser = SentenceSplitter.from_defaults(
+        chunk_size=1024,
+        chunk_overlap=20
     )
     service_context = ServiceContext.from_defaults(
         embed_model = embed_model,

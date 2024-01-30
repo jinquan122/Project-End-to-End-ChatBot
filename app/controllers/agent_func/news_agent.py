@@ -28,7 +28,8 @@ def initAgent(
     temperature: int = 0,
     seed: int = 1234,
     similarity_cutoff: int = 0.5,
-    retrieve_top_k: int = 10
+    retrieve_top_k: int = 10,
+    chat_history = None
 ) -> OpenAIAgent:
   '''
   Initialize the agent with three tools.
@@ -47,7 +48,7 @@ def initAgent(
     OpenAIAgent: The agent with three tools.
   '''
   # Define vector db retriever tools
-  storage_context = init_qdrant('article-news') 
+  storage_context = init_qdrant('news') 
   service_context = ServiceContext.from_defaults(embed_model = embed_model)
   index = VectorStoreIndex.from_vector_store(
     vector_store=storage_context.vector_store,
@@ -59,7 +60,6 @@ def initAgent(
   )
   node_postprocessors = [
         SimilarityPostprocessor(similarity_cutoff=similarity_cutoff),
-        MetadataReplacementPostProcessor(target_metadata_key="window"),
         TimeWeightedPostprocessor(time_decay=0.5, time_access_refresh=False, top_k=10)
     ]
   response_synthesizer = get_response_synthesizer(
@@ -76,7 +76,7 @@ def initAgent(
     query_engine=vector_db_query_engine,
     metadata=ToolMetadata(
       name="database",
-      description="Get news article.",
+      description="You can obtain information about news article here. This is the main news database to answer the questions.",
     )
   )
 
@@ -91,10 +91,11 @@ def initAgent(
   latest_news_tool
 
   return OpenAIAgent.from_tools(
-    [vector_query_engine_tool, *gsearch_tools[1::], *gsearch_load_and_search_tools, plotting_tool, latest_news_tool],
+    [vector_query_engine_tool, *gsearch_tools[1::], *gsearch_load_and_search_tools, plotting_tool],
     llm=OpenAI(model=model),
     verbose=True,
     system_prompt=system_prompt,
     temperature=temperature,
-    seed=seed
+    seed=seed,
+    chat_history=chat_history
   )

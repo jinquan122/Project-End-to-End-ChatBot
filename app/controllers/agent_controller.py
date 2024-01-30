@@ -10,8 +10,8 @@ from app.helpers import config_reader
 config = config_reader()
 
 class AgentController:
-  def __init__(self):
-    self.agent = initAgent()
+  def __init__(self, chat_history):
+    self.agent = initAgent(chat_history=chat_history)
     # Initiate Traceloop (LLM observarbility tool) for monitoring LLM performance
     Traceloop.init(disable_batch=True, api_key=config.get('traceloop','api_key'))
     

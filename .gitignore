@@ -21,8 +21,12 @@ io_config.yaml
 .mage_data
 .deepeval
 
-# csv
+# csv/ json
 price.csv
+news_dataset.json
+
+# init db
+db_init.ipynb
 
 # helper
 flask_init.txt
